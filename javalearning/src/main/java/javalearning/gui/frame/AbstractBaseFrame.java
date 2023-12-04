@@ -33,9 +33,9 @@ public abstract class AbstractBaseFrame extends JFrame {
 		});
 		setContentPane(basePanel);
 		setBounds(80, 80, DEFAULT_WIDTH, DEFAULT_HIGHT);
-		setVisible(true);
 		execute();
 		pack();
+		setVisible(true);
 	}
 	
 	protected final GridManager getGridManager() {

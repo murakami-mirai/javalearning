@@ -14,7 +14,7 @@ public class EditorPanel extends AbstractInputPanel {
 	
 	public EditorPanel(GridManager gridManager) {
 		super(gridManager);
-		textArea = new RSyntaxTextArea(50,100);
+		textArea = new RSyntaxTextArea(40,100);
 		textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
 		textArea.setCodeFoldingEnabled(true);
 		subPanel = new RTextScrollPane(textArea);
@@ -24,6 +24,7 @@ public class EditorPanel extends AbstractInputPanel {
 	protected void createPanel() {
 		GridSetting setting = new GridSetting();
 		addNoSetLayout(subPanel, setting);
+		getGridManager().addLine();
 	}
 
 	@Override

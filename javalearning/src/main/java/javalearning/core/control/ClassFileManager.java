@@ -27,7 +27,7 @@ public class ClassFileManager extends ForwardingJavaFileManager<JavaFileManager>
 	@Override
 	public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
 		JavaClassObject co = new JavaClassObject(className, kind);
-		map.put(className, co); // クラス名をキーにしてファイルオブジェクトを保持しておく
+		map.put(className, co); 
 		return co;
 	}
 	
