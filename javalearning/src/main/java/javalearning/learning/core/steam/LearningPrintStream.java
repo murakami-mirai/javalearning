@@ -3,6 +3,8 @@ package javalearning.learning.core.steam;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import javax.swing.SwingUtilities;
+
 import javalearning.gui.frame.panel.OutputPanel;
 
 public class LearningPrintStream extends PrintStream {
@@ -158,7 +160,14 @@ public class LearningPrintStream extends PrintStream {
     public void newLine() {
 		try {
 			OutputPanel panel = getOutputStream().getPanel();
-			panel.setText(panel.getText() + "\n");
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					panel.setText(panel.getText() + "\n");
+					
+				}
+			});
 		} catch (IOException e) {
 			trouble = true;
 		}    	
@@ -167,7 +176,14 @@ public class LearningPrintStream extends PrintStream {
 	private void write(String s) {
 		try {
 			OutputPanel panel = getOutputStream().getPanel();
-			panel.setText(panel.getText() + s);
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					panel.setText(panel.getText() + s);
+					
+				}
+			});
 		} catch (IOException e) {
 			trouble = true;
 		}
@@ -176,8 +192,14 @@ public class LearningPrintStream extends PrintStream {
 	private void writeln(String s) {
 		try {
 			OutputPanel panel = getOutputStream().getPanel();
-			panel.setText(panel.getText() + s);
-			newLine();
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					panel.setText(panel.getText() + s);
+					newLine();
+				}
+			});
 		} catch (IOException e) {
 			trouble = true;
 		}
