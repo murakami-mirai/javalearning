@@ -18,6 +18,28 @@ public class OutputPanel extends AbstractBasePanel {
 		textArea.setHighlightCurrentLine(false);
 		subPanel = new RTextScrollPane(textArea, false);
 	}
+	
+	public void setText(String text) {
+		if (text == null) {
+			text = "";
+		}
+		textArea.setText(text);
+	}
+	
+	public void setText(byte[] text) {
+		if (text == null) {
+			text = new byte[0];
+		}
+		textArea.setText(new String(text));
+	}
+	
+	public String getText() {
+		String text = textArea.getText();
+		if (text == null) {
+			text = "";
+		}
+		return text;
+	}
 
 	@Override
 	protected void createPanel() {
@@ -29,5 +51,4 @@ public class OutputPanel extends AbstractBasePanel {
 	public GridSetting getPanelSetting() {
 		return new GridSetting();
 	}
-
 }
