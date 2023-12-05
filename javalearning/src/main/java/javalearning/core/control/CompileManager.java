@@ -1,6 +1,7 @@
 package javalearning.core.control;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,42 +15,51 @@ import javax.tools.ToolProvider;
 
 import javalearning.core.listener.ErrorListener;
 import javalearning.core.model.JavaSourceCode;
-import javalearning.gui.MainFrame;
-import javalearning.learning.core.ILearning;
 
 public class CompileManager {
 
 	private final DiagnosticListener<? super JavaFileObject> listener  = new ErrorListener();
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 	private final List<Exception> errorList;
+	private final String[] mainParams;
 	
 	public CompileManager() {
 		errorList = new ArrayList<>();
+		this.mainParams = new String[0];
+	}
+	public CompileManager(String... mainParams) {
+		errorList = new ArrayList<>();
+		this.mainParams = mainParams;
 	}
 	
 	public void run(String src) {
 		CompileManager manager = new CompileManager();
-		Class<ILearning> c = manager.compile("sample.string.Sample3", src);
-		
+		Class<?> c = manager.compile("Main", src);
 		// コンパイエラーが存在する場合、実行しない
 		if (c == null || hasError()) {
+			errorList.stream().forEach(e -> {
+				e.printStackTrace();
+			});
 			return;
 		}
 
 		// インスタンスを生成して呼び出す
-		ILearning s = null;
 		try {
-			s = c.getDeclaredConstructor().newInstance();
+			Method main = c.getMethod("main", String[].class);
+			main.invoke(c, new Object[] {mainParams});
+			System.out.println("実行できました!");
 		} 
-		catch (InstantiationException e) {errorList.add(e);} 
-		catch (IllegalAccessException e) {errorList.add(e);} 
 		catch (IllegalArgumentException e) {errorList.add(e);} 
-		catch (InvocationTargetException e) {errorList.add(e);} 
 		catch (NoSuchMethodException e) {errorList.add(e);} 
-		catch (SecurityException e) {errorList.add(e);}
-		System.out.println(s.getValue());
+		catch (SecurityException e) {errorList.add(e);} 
+		catch (IllegalAccessException e) {errorList.add(e);} 
+		catch (InvocationTargetException e) {errorList.add(e);}
 		
-		new MainFrame().doProcess();
+		if(hasError()) {
+			errorList.stream().forEach(e -> {
+				e.printStackTrace();
+			});
+		}
 	}
 	
 	private <T> Class<T> compile(String className, String sourceCode) {

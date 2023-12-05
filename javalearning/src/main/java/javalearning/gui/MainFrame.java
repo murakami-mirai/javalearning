@@ -36,11 +36,10 @@ public class MainFrame extends AbstractBaseFrame {
 
 	@Override
 	protected void execute() {
-		String sourceCode = editorPanel.getInputText();
-		System.out.print("aaa");
 		controlPanel.setCompileProcess(event -> {
 			CompileManager compiler = new CompileManager();
-			compiler.run(sourceCode);
+			System.out.println("実行");
+			compiler.run(editorPanel.getInputText());
 		});
 	}
 
