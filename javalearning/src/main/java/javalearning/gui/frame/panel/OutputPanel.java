@@ -19,18 +19,15 @@ public class OutputPanel extends AbstractBasePanel {
 		subPanel = new RTextScrollPane(textArea, false);
 	}
 	
-	public void setText(String text) {
+	public void appendText(String text) {
 		if (text == null) {
 			text = "";
 		}
-		textArea.setText(text);
+		textArea.append(text);
 	}
 	
-	public void setText(byte[] text) {
-		if (text == null) {
-			text = new byte[0];
-		}
-		textArea.setText(new String(text));
+	public void resetText() {
+		textArea.replaceRange("", 0, textArea.getText().length());
 	}
 	
 	public String getText() {

@@ -1,4 +1,4 @@
-package javalearning.core.control;
+package javalearning.learning.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,27 +13,43 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
+import javalearning.core.control.ClassFileManager;
 import javalearning.core.listener.ErrorListener;
 import javalearning.core.model.JavaSourceCode;
 
-public class CompileManager {
-
+public abstract class AbstractQuestion implements Runnable {
+//public abstract class AbstractQuestion {
+	
 	private final DiagnosticListener<? super JavaFileObject> listener  = new ErrorListener();
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-	private final List<Exception> errorList;
-	private final String[] mainParams;
+	private final List<Exception> errorList = new ArrayList<>();;
 	
-	public CompileManager() {
-		errorList = new ArrayList<>();
-		this.mainParams = new String[0];
+	private String[] mainParams;
+	private String sourceCode;
+	
+	public String getSourceCode() {
+		return sourceCode;
 	}
-	public CompileManager(String... mainParams) {
-		errorList = new ArrayList<>();
-		this.mainParams = mainParams;
+
+	public void setSourceCode(String sourceCode) {
+		this.sourceCode = sourceCode;
+	}
+
+	public AbstractQuestion() {
+		mainParams = new String[0];
+		sourceCode = getCode();
 	}
 	
-	public void run(String src) {
-		Class<?> c = this.compile("Main", src);
+	protected abstract String getBeginningCode();
+	
+	protected abstract String getCorrectAnswer();
+	
+	protected String getMainClassName() {
+		return "Main";
+	}
+	
+	public void run() {
+		Class<?> c = this.compile();
 		// コンパイエラーが存在する場合、実行しない
 		if (c == null || hasError()) {
 			errorList.stream().forEach(e -> {
@@ -46,8 +62,8 @@ public class CompileManager {
 		try {
 			Method main = c.getMethod("main", String[].class);
 			main.invoke(c, new Object[] {mainParams});
-			System.out.println("実行できました!");
-		} 
+//			System.out.println("実行できました!");
+		}
 		catch (IllegalArgumentException e) {errorList.add(e);} 
 		catch (NoSuchMethodException e) {errorList.add(e);} 
 		catch (SecurityException e) {errorList.add(e);} 
@@ -61,7 +77,8 @@ public class CompileManager {
 		}
 	}
 	
-	private <T> Class<T> compile(String className, String sourceCode) {
+	private <T> Class<T> compile() {
+		String className = getMainClassName();
 		JavaFileObject fileObject = new JavaSourceCode(className, sourceCode);
 
 		// コンパイル対象
@@ -98,7 +115,17 @@ public class CompileManager {
 		}
 	}
 	
+	private String getCode() {
+		String code = "public class Main {\n"
+					+ "\tpublic static void main(String[] args) {\n";
+			   code += ("\t\t" + getBeginningCode() + "\n");
+			   code += "\t}\n";
+			   code += "}";
+		return code;
+	}
+	
 	public boolean hasError() {
 		return !errorList.isEmpty();
 	}
+
 }
