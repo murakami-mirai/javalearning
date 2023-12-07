@@ -6,9 +6,9 @@ import java.util.Collection;
 import javax.swing.SwingUtilities;
 
 import javalearning.gui.frame.AbstractBaseFrame;
-import javalearning.gui.frame.panel.AbstractBasePanel;
 import javalearning.gui.frame.panel.ControlPanel;
 import javalearning.gui.frame.panel.EditorPanel;
+import javalearning.gui.frame.panel.IPanel;
 import javalearning.gui.frame.panel.OutputPanel;
 import javalearning.learning.core.AbstractQuestion;
 import javalearning.learning.core.Question1;
@@ -22,9 +22,9 @@ public class MainFrame extends AbstractBaseFrame {
 	private final OutputPanel outputPanel;
 	
 	public MainFrame() {
-		editorPanel = new EditorPanel(getGridManager());
-		controlPanel = new ControlPanel(getGridManager());
-		outputPanel = new OutputPanel(getGridManager());
+		editorPanel = new EditorPanel();
+		controlPanel = new ControlPanel();
+		outputPanel = new OutputPanel();
 		
 		LearnigOutputStream outputStream = new LearnigOutputStream(outputPanel);
 		LearningPrintStream printSteam = new LearningPrintStream(outputStream);
@@ -33,8 +33,8 @@ public class MainFrame extends AbstractBaseFrame {
 	}
 	
 	@Override
-	protected Collection<AbstractBasePanel> getPanelCollection() {
-		return Arrays.asList(editorPanel, outputPanel, controlPanel);
+	protected Collection<IPanel> getPanelCollection() {
+		return Arrays.asList(controlPanel, editorPanel, outputPanel);
 	}
 
 	@Override

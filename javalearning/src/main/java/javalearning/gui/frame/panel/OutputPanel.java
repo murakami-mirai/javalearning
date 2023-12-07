@@ -3,16 +3,12 @@ package javalearning.gui.frame.panel;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import javalearning.gui.grid.GridManager;
-import javalearning.gui.grid.GridSetting;
-
-public class OutputPanel extends AbstractBasePanel {
+public class OutputPanel extends AbstractScrollBasePanel {
 
 	private final RTextScrollPane subPanel;
 	private final RTextArea textArea;
 	
-	public OutputPanel(GridManager gridManager) {
-		super(gridManager);
+	public OutputPanel() {
 		textArea = new RTextArea(10, 105);
 		textArea.setEditable(false);
 		textArea.setHighlightCurrentLine(false);
@@ -27,7 +23,7 @@ public class OutputPanel extends AbstractBasePanel {
 	}
 	
 	public void resetText() {
-		textArea.replaceRange("", 0, textArea.getText().length());
+		
 	}
 	
 	public String getText() {
@@ -39,13 +35,12 @@ public class OutputPanel extends AbstractBasePanel {
 	}
 
 	@Override
-	protected void createPanel() {
-		addNoSetLayout(subPanel, new GridSetting());
-		getGridManager().addLine();
+	public void create() {
+		add(subPanel);
 	}
-
+	
 	@Override
-	public GridSetting getPanelSetting() {
-		return new GridSetting();
+	protected GridSetting getGridSetting() {
+		return new GridSetting(0, 3, 1, 2);
 	}
 }

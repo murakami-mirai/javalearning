@@ -4,30 +4,25 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import javalearning.gui.grid.GridManager;
-import javalearning.gui.grid.GridSetting;
-
 public class ControlPanel extends AbstractBasePanel {
 
 	private final JButton compileButton;
 	
-	public ControlPanel(GridManager gridManager) {
-		super(gridManager);
+	public ControlPanel() {
 		compileButton = new JButton("実行");
 	}
 
 	@Override
-	protected void createPanel() {
-		GridSetting setting = new GridSetting();
-		add(compileButton,setting);
-		getGridManager().addLine();
+	public void create() {
+		add(compileButton);
+	}
+
+	public void setCompileProcess(ActionListener listner) {
+		compileButton.addActionListener(listner);
 	}
 
 	@Override
-	public GridSetting getPanelSetting() {
-		return new GridSetting();
-	}
-	public void setCompileProcess(ActionListener listner) {
-		compileButton.addActionListener(listner);
+	protected GridSetting getGridSetting() {
+		return new GridSetting(0, 0, 1, 1);
 	}
 }

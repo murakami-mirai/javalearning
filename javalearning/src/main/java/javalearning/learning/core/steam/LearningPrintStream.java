@@ -144,8 +144,6 @@ public class LearningPrintStream extends PrintStream {
     public void println(Object x) {
         String s = String.valueOf(x);
         if (getClass() == LearningPrintStream.class) {
-            // need to apply String.valueOf again since first invocation
-            // might return null
             writeln(String.valueOf(s));
         } else {
             synchronized (this) {
