@@ -6,6 +6,7 @@ public abstract class AbstractQuestion implements Runnable {
 //public abstract class AbstractQuestion {
 	
 	private static final String MAIN_CLASS = "Main";
+	private static final String DEFAULT_PACKAGE = "";
 	
 	private String[] mainParams;
 	private String sourceCode;
@@ -25,7 +26,7 @@ public abstract class AbstractQuestion implements Runnable {
 	
 	@Override
 	public void run() {
-		CompileRunListner listner = new CompileRunListner(getMainClassName(), sourceCode, mainParams);
+		CompileRunListner listner = new CompileRunListner(getFQCN(), sourceCode, mainParams);
 		listner.run();
 	}
 	
@@ -37,12 +38,36 @@ public abstract class AbstractQuestion implements Runnable {
 		return MAIN_CLASS;
 	}
 	
+	protected String getPackage() {
+		return DEFAULT_PACKAGE;
+	}
+	
 	private String getCode() {
-		String code = "public class Main {\n"
-					+ "\tpublic static void main(String[] args) {\n";
-			   code += ("\t\t" + getBeginningCode() + "\n");
-			   code += "\t}\n";
-			   code += "}";
-		return code;
+		StringBuilder sb = new StringBuilder();
+		if (isExistPackage()) {
+			sb.append("package " + getPackage());
+		}
+		sb.append("public class ").append(MAIN_CLASS).append(" {\n");
+		sb.append("\tpublic static void main(String[] args) {\n");
+		sb.append("\t\t").append(getBeginningCode()).append("\n");
+		sb.append("\t}\n");
+		sb.append("}");
+		return sb.toString();
+	}
+	
+	private String getFQCN() {
+		String pack = getPackage();
+		if (!isExistPackage()) {
+			return getMainClassName();
+		}
+		StringBuilder sb = new StringBuilder(pack);
+		sb.append(".");
+		sb.append(getMainClassName());
+		return sb.toString();
+	}
+	
+	public boolean isExistPackage() {
+		String pack = getPackage();
+		return !(pack == null || pack.isBlank());
 	}
 }

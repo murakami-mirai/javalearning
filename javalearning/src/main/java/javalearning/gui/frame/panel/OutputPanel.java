@@ -23,7 +23,7 @@ public class OutputPanel extends AbstractScrollBasePanel {
 	
 	public void resetText() {
 		int length = textArea.getText().length();
-		textArea.replaceRange("", 0, length);;
+		textArea.replaceRange("", 0, length);
 	}
 	
 	public String getText() {
