@@ -1,18 +1,17 @@
 package javalearning.gui.frame.panel;
 
-import org.fife.ui.rtextarea.RTextArea;
-import org.fife.ui.rtextarea.RTextScrollPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class OutputPanel extends AbstractScrollBasePanel {
 
-	private final RTextScrollPane subPanel;
-	private final RTextArea textArea;
+	private final JScrollPane subPanel;
+	private final JTextArea textArea;
 	
 	public OutputPanel() {
-		textArea = new RTextArea(10, 105);
+		textArea = new JTextArea(10, 105);
 		textArea.setEditable(false);
-		textArea.setHighlightCurrentLine(false);
-		subPanel = new RTextScrollPane(textArea, false);
+		subPanel = new JScrollPane(textArea);
 	}
 	
 	public void appendText(String text) {
@@ -23,7 +22,8 @@ public class OutputPanel extends AbstractScrollBasePanel {
 	}
 	
 	public void resetText() {
-		
+		int length = textArea.getText().length();
+		textArea.replaceRange("", 0, length);;
 	}
 	
 	public String getText() {
