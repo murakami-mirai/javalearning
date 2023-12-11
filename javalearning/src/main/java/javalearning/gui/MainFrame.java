@@ -1,8 +1,14 @@
 package javalearning.gui;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import javalearning.gui.frame.AbstractBaseFrame;
@@ -25,6 +31,7 @@ public class MainFrame extends AbstractBaseFrame {
 		editorPanel = new EditorPanel();
 		controlPanel = new ControlPanel();
 		outputPanel = new OutputPanel();
+		createMenubar();
 		
 		LearnigOutputStream outputStream = new LearnigOutputStream(outputPanel);
 		LearningPrintStream printSteam = new LearningPrintStream(outputStream);
@@ -47,6 +54,25 @@ public class MainFrame extends AbstractBaseFrame {
 			SwingUtilities.invokeLater(question);
 //			question.run();
 		});
+	}
+	
+	private void createMenubar() {
+		AbstractQuestion question = new Question1();
+		JMenuBar menubar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		JMenu editMenu = new JMenu("Edit");
+		JMenuItem runMenuItem = new JMenuItem("Run");
+		runMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
+		runMenuItem.addActionListener(event -> {
+			outputPanel.resetText();
+			question.setSourceCode(editorPanel.getInputText());
+			SwingUtilities.invokeLater(question);			
+		});
+		editMenu.add(runMenuItem);
+		
+		menubar.add(fileMenu);
+		menubar.add(editMenu);
+		setJMenuBar(menubar);
 	}
 
 }

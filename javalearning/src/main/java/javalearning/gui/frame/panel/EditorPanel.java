@@ -1,6 +1,7 @@
 package javalearning.gui.frame.panel;
 
-import org.fife.ui.autocomplete.AutoCompletion;
+import org.fife.rsta.ac.LanguageSupportFactory;
+import org.fife.rsta.ac.java.JavaLanguageSupport;
 import org.fife.ui.autocomplete.BasicCompletion;
 import org.fife.ui.autocomplete.CompletionProvider;
 import org.fife.ui.autocomplete.DefaultCompletionProvider;
@@ -10,20 +11,37 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class EditorPanel extends AbstractInputPanel {
+	
+	private static final String[] RESERVED_WORDS = {
+			"abstract", "assert", "boolean", "break", "byte",
+			"case", "catch", "char", "class", "const",
+			"continue", "default", "do", "double", "else",
+			"enum", "extends", "final", "finally", "float",
+			"for", "goto", "if", "implements", "import",
+			"instanceof", "int", "interface", "long", "native",
+			"new", "package", "private", "protected", "public",
+			"return", "short", "static", "strictfp", "super",
+			"switch", "synchrnized", "this", "throw", "throws",
+			"transient", "try", "void", "volatile", "while"};
 
 	private final RSyntaxTextArea textArea;
 	private final RTextScrollPane subPanel;
 	
 	public EditorPanel() {
 		textArea = new RSyntaxTextArea(20,100);
+		LanguageSupportFactory factory = LanguageSupportFactory.get();
+		JavaLanguageSupport support = (JavaLanguageSupport)factory.getSupportFor(SyntaxConstants.SYNTAX_STYLE_JAVA);
+//		support.getJarManager().addClassFileSource();
+		support.setShowDescWindow(true);
+		factory.register(textArea);
 		textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
 		textArea.setCodeFoldingEnabled(true);
-		
-		CompletionProvider provider = createCompletionProvider();
-		AutoCompletion ac = new AutoCompletion(provider);
-		ac.install(textArea);
-		
 		subPanel = new RTextScrollPane(textArea);
+		
+//		CompletionProvider provider = createCompletionProvider();
+//		AutoCompletion ac = new AutoCompletion(provider);
+//		ac.install(textArea);
+		
 	}
 
 	@Override
@@ -56,23 +74,13 @@ public class EditorPanel extends AbstractInputPanel {
 
 	      // Add completions for all Java keywords. A BasicCompletion is just
 	      // a straightforward word completion.
-	      provider.addCompletion(new BasicCompletion(provider, "abstract"));
-	      provider.addCompletion(new BasicCompletion(provider, "assert"));
-	      provider.addCompletion(new BasicCompletion(provider, "break"));
-	      provider.addCompletion(new BasicCompletion(provider, "case"));
-	      // ... etc ...
-	      provider.addCompletion(new BasicCompletion(provider, "transient"));
-	      provider.addCompletion(new BasicCompletion(provider, "try"));
-	      provider.addCompletion(new BasicCompletion(provider, "void"));
-	      provider.addCompletion(new BasicCompletion(provider, "volatile"));
-	      provider.addCompletion(new BasicCompletion(provider, "while"));
-
+	      for (String keyword : RESERVED_WORDS) {
+	    	  provider.addCompletion(new BasicCompletion(provider, keyword));
+	      }
 	      // Add a couple of "shorthand" completions. These completions don't
 	      // require the input text to be the same thing as the replacement text.
 	      provider.addCompletion(new ShorthandCompletion(provider, "sysout",
 	            "System.out.println(", "System.out.println("));
-	      provider.addCompletion(new ShorthandCompletion(provider, "syserr",
-	            "System.err.println(", "System.err.println("));
 
 	      return provider;
 
