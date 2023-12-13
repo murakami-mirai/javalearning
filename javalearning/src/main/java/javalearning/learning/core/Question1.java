@@ -1,6 +1,12 @@
 package javalearning.learning.core;
 
+import javalearning.learning.core.steam.LearningPrintStream;
+
 public class Question1 extends AbstractQuestion {
+
+	public Question1(LearningPrintStream outStream, LearningPrintStream errStream) {
+		super(outStream, errStream);
+	}
 
 	@Override
 	protected String getBeginningCode() {
@@ -9,7 +15,7 @@ public class Question1 extends AbstractQuestion {
 
 	@Override
 	protected String getCorrectAnswer() {
-		return "";
+		return String.valueOf(3);
 	}
 
 }

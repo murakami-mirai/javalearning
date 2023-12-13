@@ -21,21 +21,21 @@ import javalearning.learning.core.steam.LearnigOutputStream;
 import javalearning.learning.core.steam.LearningPrintStream;
 
 public class MainFrame extends AbstractBaseFrame {
-
+	
 	private final EditorPanel editorPanel;
 //	private final ControlPanel controlPanel;
 	private final OutputPanel outputPanel;
+	private final LearningPrintStream printStream;
+	
 	
 	public MainFrame() {
 		editorPanel = new EditorPanel();
 //		controlPanel = new ControlPanel();
 		outputPanel = new OutputPanel();
-		createMenubar();
+//		createMenubar();
 		
 		LearnigOutputStream outputStream = new LearnigOutputStream(outputPanel);
-		LearningPrintStream printSteam = new LearningPrintStream(outputStream);
-		System.setOut(printSteam);
-		System.setErr(printSteam);
+		printStream = new LearningPrintStream(outputStream);
 	}
 	
 	@Override
@@ -45,8 +45,9 @@ public class MainFrame extends AbstractBaseFrame {
 
 	@Override
 	protected void execute() {
-		AbstractQuestion question = new Question1();
-		editorPanel.setInputText(question.getSourceCode());
+		createMenubar();
+//		AbstractQuestion question = new Question1(printStream, printStream);
+//		editorPanel.setInputText(question.getSourceCode());
 //		controlPanel.setCompileProcess(event -> {
 //			outputPanel.resetText();
 //			question.setSourceCode(editorPanel.getInputText());
@@ -56,7 +57,8 @@ public class MainFrame extends AbstractBaseFrame {
 	}
 	
 	private void createMenubar() {
-		AbstractQuestion question = new Question1();
+		AbstractQuestion question = new Question1(printStream, printStream);
+		editorPanel.setInputText(question.getSourceCode());
 		JMenuBar menubar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		JMenu editMenu = new JMenu("Edit");
@@ -65,7 +67,8 @@ public class MainFrame extends AbstractBaseFrame {
 		runMenuItem.addActionListener(event -> {
 			outputPanel.resetText();
 			question.setSourceCode(editorPanel.getInputText());
-			SwingUtilities.invokeLater(question);			
+			
+			SwingUtilities.invokeLater(question);
 		});
 		editMenu.add(runMenuItem);
 		

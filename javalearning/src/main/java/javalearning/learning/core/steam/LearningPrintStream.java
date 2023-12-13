@@ -167,6 +167,13 @@ public class LearningPrintStream extends PrintStream {
 		return "";
     }
     
+	public LearnigOutputStream getOutputStream() throws IOException {
+		if (!(out instanceof LearnigOutputStream)) {
+			throw new IOException();
+		}
+		return (LearnigOutputStream)out;
+	}
+    
 	private void write(String s) {
 		try {
 			OutputPanel panel = getOutputStream().getPanel();
@@ -181,10 +188,4 @@ public class LearningPrintStream extends PrintStream {
 		newLine();
 	}
     
-	private LearnigOutputStream getOutputStream() throws IOException {
-		if (!(out instanceof LearnigOutputStream)) {
-			throw new IOException();
-		}
-		return (LearnigOutputStream)out;
-	}
 }
