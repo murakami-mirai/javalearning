@@ -1,4 +1,4 @@
-package javalearning.gui;
+package javalearning.core.ui.frame;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -11,28 +11,24 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import javalearning.gui.frame.AbstractBaseFrame;
-import javalearning.gui.frame.panel.EditorPanel;
-import javalearning.gui.frame.panel.IPanel;
-import javalearning.gui.frame.panel.OutputPanel;
-import javalearning.learning.core.AbstractQuestion;
-import javalearning.learning.core.Question1;
-import javalearning.learning.core.steam.LearnigOutputStream;
-import javalearning.learning.core.steam.LearningPrintStream;
+import javalearning.core.model.AbstractQuestion;
+import javalearning.core.stream.LearnigOutputStream;
+import javalearning.core.stream.LearningPrintStream;
+import javalearning.core.ui.panel.EditorPanel;
+import javalearning.core.ui.panel.IPanel;
+import javalearning.core.ui.panel.OutputPanel;
+import javalearning.questions.Question1;
 
 public class MainFrame extends AbstractBaseFrame {
 	
 	private final EditorPanel editorPanel;
-//	private final ControlPanel controlPanel;
 	private final OutputPanel outputPanel;
 	private final LearningPrintStream printStream;
 	
 	
 	public MainFrame() {
 		editorPanel = new EditorPanel();
-//		controlPanel = new ControlPanel();
 		outputPanel = new OutputPanel();
-//		createMenubar();
 		
 		LearnigOutputStream outputStream = new LearnigOutputStream(outputPanel);
 		printStream = new LearningPrintStream(outputStream);
@@ -46,14 +42,6 @@ public class MainFrame extends AbstractBaseFrame {
 	@Override
 	protected void execute() {
 		createMenubar();
-//		AbstractQuestion question = new Question1(printStream, printStream);
-//		editorPanel.setInputText(question.getSourceCode());
-//		controlPanel.setCompileProcess(event -> {
-//			outputPanel.resetText();
-//			question.setSourceCode(editorPanel.getInputText());
-//			SwingUtilities.invokeLater(question);
-////			question.run();
-//		});
 	}
 	
 	private void createMenubar() {

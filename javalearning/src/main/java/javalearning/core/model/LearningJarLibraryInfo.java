@@ -23,13 +23,7 @@ import org.fife.rsta.ac.java.buildpath.LibraryInfo;
 import org.fife.rsta.ac.java.classreader.ClassFile;
 
 public class LearningJarLibraryInfo extends LibraryInfo {
-	/**
-	 * Mapping of class names to <code>ClassFile</code>s. This information is cached
-	 * even though it's also cached at the <code>JarReader</code> level because the
-	 * class definitions are effectively immutable since they're on the classpath.
-	 * This allows you to theoretically share a single
-	 * <code>ClasspathLibraryInfo</code> across several different jar managers.
-	 */
+
 	private Map<String, ClassFile> classNameToClassFile;
 	private Map<String, String> classNameToFullyQualified;
 	private Map<String, String> classNameToModule;

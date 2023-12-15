@@ -1,8 +1,8 @@
-package javalearning.learning.core.steam;
+package javalearning.core.stream;
 
 import java.io.ByteArrayOutputStream;
 
-import javalearning.gui.frame.panel.OutputPanel;
+import javalearning.core.ui.panel.OutputPanel;
 
 public class LearnigOutputStream extends ByteArrayOutputStream {
 

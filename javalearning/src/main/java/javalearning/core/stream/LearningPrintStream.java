@@ -1,9 +1,9 @@
-package javalearning.learning.core.steam;
+package javalearning.core.stream;
 
 import java.io.IOException;
 import java.io.PrintStream;
 
-import javalearning.gui.frame.panel.OutputPanel;
+import javalearning.core.ui.panel.OutputPanel;
 
 public class LearningPrintStream extends PrintStream {
 	

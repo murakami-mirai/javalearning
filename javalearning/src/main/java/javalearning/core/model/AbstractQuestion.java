@@ -1,11 +1,16 @@
-package javalearning.learning.core;
+package javalearning.core.model;
 
 import java.io.PrintStream;
 
 import javalearning.core.listener.CompileRunListner;
-import javalearning.learning.core.steam.LearningPrintStream;
+import javalearning.core.stream.LearningPrintStream;
 
 public abstract class AbstractQuestion implements Runnable {
+	
+	/** 改行文字 */
+	protected static final String LF = "\n";
+	/** インデント */
+	protected static final String INDENT = "\t";
 	
 	/** 標準出力を保存 */
 	private static final PrintStream SYSTEM_OUT = System.out;
@@ -15,7 +20,7 @@ public abstract class AbstractQuestion implements Runnable {
 	private static final String MAIN_CLASS = "Main";
 	/** デフォルトパッケージ */
 	private static final String DEFAULT_PACKAGE = "";
-	
+
 	/** ラーニングシステムの標準出力 */
 	private final LearningPrintStream outStream;
 	/** ラーニングシステムの標準エラー */
@@ -65,6 +70,8 @@ public abstract class AbstractQuestion implements Runnable {
 	
 	protected abstract String getCorrectAnswer();
 	
+	protected abstract String getQuestionText();
+	
 	protected String getMainClassName() {
 		return MAIN_CLASS;
 	}
@@ -78,10 +85,11 @@ public abstract class AbstractQuestion implements Runnable {
 		if (isExistPackage()) {
 			sb.append("package ").append(getPackage());
 		}
-		sb.append("public class ").append(MAIN_CLASS).append(" {\n");
-		sb.append("\tpublic static void main(String[] args) {\n");
-		sb.append("\t\t").append(getBeginningCode()).append("\n");
-		sb.append("\t}\n");
+		sb.append(createJavaDocComment());
+		sb.append("public class ").append(MAIN_CLASS).append(" {").append(LF);
+		sb.append(INDENT).append("public static void main(String[] args) {").append(LF);
+		sb.append(INDENT).append(INDENT).append(getBeginningCode()).append(LF);
+		sb.append(INDENT).append("}").append(LF);
 		sb.append("}");
 		return sb.toString();
 	}
@@ -126,9 +134,31 @@ public abstract class AbstractQuestion implements Runnable {
 	}
 	
 	private String trimIndentionOfLineEnd(String text) {
-		if (text.length() > 1 && text.endsWith("\n")) {
+		if (text.length() > 1 && text.endsWith(LF)) {
 			return text.substring(0, text.length() - 1); 
 		}
 		return text;
+	}
+	
+	private String createJavaDocComment() {
+		
+		final String startComment = "/**";
+		final String endComment = "*/";
+		final String bol = "* ";
+		
+		String content = getQuestionText();
+		StringBuilder sb = new StringBuilder(startComment).append(LF);
+		
+		sb.append(bol).append(getClass().getSimpleName()).append(LF);
+		
+		// 問題文がある場合、問題文を表示
+		if (content != null && !content.isBlank()) {
+			content.lines().forEach(t -> {
+				sb.append(bol).append(t).append(LF);
+			});
+		}
+
+		sb.append(endComment).append(LF);
+		return sb.toString();
 	}
 }

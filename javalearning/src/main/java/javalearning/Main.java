@@ -2,7 +2,7 @@ package javalearning;
 
 import javax.swing.SwingUtilities;
 
-import javalearning.gui.MainFrame;
+import javalearning.core.ui.frame.MainFrame;
 
 public class Main {
 

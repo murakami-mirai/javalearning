@@ -1,4 +1,4 @@
-package javalearning.gui.frame.panel;
+package javalearning.core.ui.panel;
 
 import java.awt.event.ActionListener;
 

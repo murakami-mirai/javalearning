@@ -1,4 +1,4 @@
-package javalearning.gui.frame;
+package javalearning.core.ui.frame;
 
 import java.awt.GridBagLayout;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import javalearning.gui.frame.panel.IPanel;
+import javalearning.core.ui.panel.IPanel;
 
 
 public abstract class AbstractBaseFrame extends JFrame {

@@ -1,6 +1,7 @@
-package javalearning.learning.core;
+package javalearning.questions;
 
-import javalearning.learning.core.steam.LearningPrintStream;
+import javalearning.core.model.AbstractQuestion;
+import javalearning.core.stream.LearningPrintStream;
 
 public class Question1 extends AbstractQuestion {
 
@@ -16,6 +17,11 @@ public class Question1 extends AbstractQuestion {
 	@Override
 	protected String getCorrectAnswer() {
 		return String.valueOf(3);
+	}
+
+	@Override
+	protected String getQuestionText() {
+		return "「3」を表示するプログラムを作成して下さい";
 	}
 
 }
