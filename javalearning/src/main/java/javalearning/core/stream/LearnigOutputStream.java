@@ -6,6 +6,7 @@ import javalearning.core.ui.panel.OutputPanel;
 
 public class LearnigOutputStream extends ByteArrayOutputStream {
 
+//	private final OutputPanel panel;
 	private final OutputPanel panel;
 	
 	public LearnigOutputStream(OutputPanel panel) {
@@ -15,5 +16,14 @@ public class LearnigOutputStream extends ByteArrayOutputStream {
 	
 	public OutputPanel getPanel() {
 		return panel;
-	}
+	}	
+	
+//	public LearnigOutputStream(OutputPanel panel) {
+//		super();
+//		this.panel = panel;
+//	}
+//	
+//	public OutputPanel getPanel() {
+//		return panel;
+//	}
 }

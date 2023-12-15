@@ -1,6 +1,9 @@
-package javalearning.core.model;
+package javalearning.questions;
 
 import java.io.PrintStream;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javalearning.core.listener.CompileRunListner;
 import javalearning.core.stream.LearningPrintStream;
@@ -20,6 +23,8 @@ public abstract class AbstractQuestion implements Runnable {
 	private static final String MAIN_CLASS = "Main";
 	/** デフォルトパッケージ */
 	private static final String DEFAULT_PACKAGE = "";
+	
+	private static final Logger LOGGER = LogManager.getLogger(AbstractQuestion.class);
 
 	/** ラーニングシステムの標準出力 */
 	private final LearningPrintStream outStream;
@@ -30,6 +35,11 @@ public abstract class AbstractQuestion implements Runnable {
 	/** コンパイル対象のソースコード */
 	private String sourceCode;
 
+	/**
+	 * コンストラクタ
+	 * @param outStream 出力ストリーム
+	 * @param errStream エラー出力ストリーム
+	 */
 	public AbstractQuestion(LearningPrintStream outStream, LearningPrintStream errStream) {
 		sourceCode = getCode();
 		mainParams = new String[0];
@@ -37,6 +47,12 @@ public abstract class AbstractQuestion implements Runnable {
 		this.errStream = errStream;
 	}
 	
+	/**
+	 * コンストラクタ
+	 * @param outStream 出力ストリーム
+	 * @param errStream エラー出力ストリーム
+	 * @param args メインパラメータ
+	 */
 	public AbstractQuestion(LearningPrintStream outStream, LearningPrintStream errStream, String... args) {
 		sourceCode = getCode();
 		mainParams = args;
@@ -60,8 +76,10 @@ public abstract class AbstractQuestion implements Runnable {
 		listner.run();
 		if (isSuccess()) {
 			System.out.println("正解!!");
+			LOGGER.info("正解");
 		} else {
 			System.out.println("残念。。。");
+			LOGGER.info("不正解");
 		}
 		setStdOut(SYSTEM_OUT, SYSTEM_ERR);
 	}
@@ -140,6 +158,16 @@ public abstract class AbstractQuestion implements Runnable {
 		return text;
 	}
 	
+	/**
+	 * 以下のようにJavaDocコメントを作成する
+	 * <pre>{@code
+	 * ---------------------
+	 * 問題名(クラス名)
+	 * 問題文
+	 * ---------------------
+	 * }</pre>
+	 * @return 作成したJavaDocコメント
+	 */
 	private String createJavaDocComment() {
 		
 		final String startComment = "/**";

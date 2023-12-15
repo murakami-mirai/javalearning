@@ -11,32 +11,37 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import javalearning.core.model.AbstractQuestion;
 import javalearning.core.stream.LearnigOutputStream;
 import javalearning.core.stream.LearningPrintStream;
 import javalearning.core.ui.panel.EditorPanel;
 import javalearning.core.ui.panel.IPanel;
-import javalearning.core.ui.panel.OutputPanel;
+import javalearning.core.ui.panel.OutputTabPanel;
+import javalearning.questions.AbstractQuestion;
 import javalearning.questions.Question1;
 
 public class MainFrame extends AbstractBaseFrame {
 	
 	private final EditorPanel editorPanel;
-	private final OutputPanel outputPanel;
-	private final LearningPrintStream printStream;
-	
-	
+	private final OutputTabPanel outputTabPanel;
+	private final LearningPrintStream consolePrintStream;
+	private final LearningPrintStream outputPrintStream;
+	private final LearningPrintStream errorPrintStream;
+
 	public MainFrame() {
 		editorPanel = new EditorPanel();
-		outputPanel = new OutputPanel();
+		outputTabPanel = new OutputTabPanel();
 		
-		LearnigOutputStream outputStream = new LearnigOutputStream(outputPanel);
-		printStream = new LearningPrintStream(outputStream);
+		LearnigOutputStream consoleOutStream = new LearnigOutputStream(outputTabPanel.getConsolePanel());
+		LearnigOutputStream outputOutStream = new LearnigOutputStream(outputTabPanel.getOutputPanel());
+		LearnigOutputStream errorOutStream = new LearnigOutputStream(outputTabPanel.getErrorPanel());
+		consolePrintStream = new LearningPrintStream(consoleOutStream);
+		outputPrintStream = new LearningPrintStream(outputOutStream);
+		errorPrintStream = new LearningPrintStream(errorOutStream);
 	}
 	
 	@Override
 	protected Collection<IPanel> getPanelCollection() {
-		return Arrays.asList(editorPanel, outputPanel);
+		return Arrays.asList(editorPanel, outputTabPanel);	
 	}
 
 	@Override
@@ -45,15 +50,15 @@ public class MainFrame extends AbstractBaseFrame {
 	}
 	
 	private void createMenubar() {
-		AbstractQuestion question = new Question1(printStream, printStream);
+		AbstractQuestion question = new Question1(outputPrintStream, errorPrintStream);
 		editorPanel.setInputText(question.getSourceCode());
 		JMenuBar menubar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
-		JMenu editMenu = new JMenu("Edit");
-		JMenuItem runMenuItem = new JMenuItem("Run");
+		JMenu fileMenu = new JMenu("ファイル");
+		JMenu editMenu = new JMenu("実行");
+		JMenuItem runMenuItem = new JMenuItem("実行");
 		runMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
 		runMenuItem.addActionListener(event -> {
-			outputPanel.resetText();
+			outputTabPanel.getOutputPanel().resetText();
 			question.setSourceCode(editorPanel.getInputText());
 			
 			SwingUtilities.invokeLater(question);
@@ -64,5 +69,4 @@ public class MainFrame extends AbstractBaseFrame {
 		menubar.add(editMenu);
 		setJMenuBar(menubar);
 	}
-
 }

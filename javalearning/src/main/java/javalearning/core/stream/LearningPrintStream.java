@@ -3,11 +3,14 @@ package javalearning.core.stream;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javalearning.core.ui.panel.OutputPanel;
 
 public class LearningPrintStream extends PrintStream {
 	
-	private boolean trouble = false;
+	private Logger LOGGER = LogManager.getLogger(LearningPrintStream.class);
 	
 	public LearningPrintStream(LearnigOutputStream output) {
 		super(output);
@@ -162,7 +165,7 @@ public class LearningPrintStream extends PrintStream {
 			OutputPanel panel = getOutputStream().getPanel();
 			return panel.getText();
 		} catch (IOException e) {
-			trouble = true;
+			LOGGER.error(e);
 		}
 		return "";
     }
@@ -179,7 +182,7 @@ public class LearningPrintStream extends PrintStream {
 			OutputPanel panel = getOutputStream().getPanel();
 			panel.appendText(s);
 		} catch (IOException e) {
-			trouble = true;
+			LOGGER.error(e);
 		}
 	}
 

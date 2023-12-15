@@ -1,6 +1,5 @@
 package javalearning.questions;
 
-import javalearning.core.model.AbstractQuestion;
 import javalearning.core.stream.LearningPrintStream;
 
 public class Question1 extends AbstractQuestion {
@@ -11,7 +10,7 @@ public class Question1 extends AbstractQuestion {
 
 	@Override
 	protected String getBeginningCode() {
-		return "System.out.println(\"実行\");";
+		return "System.out.println();";
 	}
 
 	@Override
