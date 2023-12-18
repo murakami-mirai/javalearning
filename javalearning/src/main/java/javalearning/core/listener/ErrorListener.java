@@ -8,13 +8,13 @@ public class ErrorListener implements DiagnosticListener<JavaFileObject> {
 
 	@Override
 	public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-		System.out.println("▼report start");
-		System.out.println("errcode：" + diagnostic.getCode());
-		System.out.println("line   ：" + diagnostic.getLineNumber());
-		System.out.println("column ：" + diagnostic.getColumnNumber());
-		System.out.println("message：" + diagnostic.getMessage(null));
+		System.err.println("▼report start");
+		System.err.println("errcode：" + diagnostic.getCode());
+		System.err.println("line   ：" + diagnostic.getLineNumber());
+		System.err.println("column ：" + diagnostic.getColumnNumber());
+		System.err.println("message：" + diagnostic.getMessage(null));
 		//System.out.println(diagnostic.toString());
-		System.out.println("▲report end");
+		System.err.println("▲report end");
 	}
 
 }

@@ -8,8 +8,8 @@ public class ReadQuestion extends AbstractQuestion {
 	private String correctAnswer;
 	private String questionText;
 	
-	public ReadQuestion(LearningPrintStream outStream, LearningPrintStream errStream) {
-		super(outStream, errStream);
+	public ReadQuestion(LearningPrintStream consoleStream, LearningPrintStream outStream, LearningPrintStream errStream) {
+		super(consoleStream, outStream, errStream);
 	}
 
 	@Override

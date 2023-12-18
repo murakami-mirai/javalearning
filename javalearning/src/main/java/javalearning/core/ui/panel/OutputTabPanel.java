@@ -4,6 +4,8 @@ import java.awt.GridBagConstraints;
 
 import javax.swing.JTabbedPane;
 
+import javalearning.core.listener.ui.TabFocusListener;
+
 public class OutputTabPanel extends JTabbedPane implements IPanel {
 
 	private OutputPanel consolePanel;
@@ -11,9 +13,9 @@ public class OutputTabPanel extends JTabbedPane implements IPanel {
 	private OutputPanel errorPanel;
 	
 	public OutputTabPanel() {
-		consolePanel = new OutputPanel();
-		outputPanel = new OutputPanel();
-		errorPanel = new OutputPanel();
+		consolePanel = new OutputPanel(new TabFocusListener(this));
+		outputPanel = new OutputPanel(new TabFocusListener(this));
+		errorPanel = new OutputPanel(new TabFocusListener(this));
 	}
 	
 	@Override

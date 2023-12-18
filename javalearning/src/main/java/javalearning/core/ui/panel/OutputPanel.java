@@ -1,15 +1,21 @@
 package javalearning.core.ui.panel;
 
+import java.awt.event.InputMethodListener;
+
 import javax.swing.JScrollPane;
 
 import org.fife.ui.rtextarea.RTextArea;
 
+import javalearning.core.listener.ui.IFocusListener;
+
 public class OutputPanel extends AbstractScrollBasePanel {
 	private final RTextArea textArea;
 	private final JScrollPane subPanel;
+	private final IFocusListener listener;
 	
-	public OutputPanel() {
-		textArea = new RTextArea(10, 105);
+	public OutputPanel(IFocusListener listener) {
+		this.listener = listener;
+		textArea = new RTextArea(10, 103);
 		textArea.setHighlightCurrentLine(false);
 		textArea.setEditable(false);
 		subPanel = new JScrollPane(textArea);
@@ -20,6 +26,7 @@ public class OutputPanel extends AbstractScrollBasePanel {
 			text = "";
 		}
 		textArea.append(text);
+		listener.forcus(this);
 	}
 	
 	public synchronized void resetText() {
@@ -35,8 +42,14 @@ public class OutputPanel extends AbstractScrollBasePanel {
 		return text;
 	}
 	
+	
 	public void create() {
 		this.add(subPanel);
+		
+	}
+	
+	public void addListener(InputMethodListener listener) {
+		textArea.addInputMethodListener(listener);
 	}
 
 	@Override

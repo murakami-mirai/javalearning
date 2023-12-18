@@ -1,4 +1,4 @@
-package javalearning.core.listener;
+package javalearning.core.control;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,20 +13,20 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
-import javalearning.core.control.ClassFileManager;
+import javalearning.core.listener.ErrorListener;
 import javalearning.core.model.JavaSourceCode;
 
-public class CompileRunListner {
+public class CompileRunManger {
 	
 	private final DiagnosticListener<? super JavaFileObject> listener  = new ErrorListener();
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-	private final List<Exception> errorList = new ArrayList<>();
+	private final List<Throwable> errorList = new ArrayList<>();
 	
 	private final String[] mainParams;
 	private final String sourceCode;
 	private final String mainClassName;
 	
-	public CompileRunListner(String mainClassName, String sourceCode, String... mainParams) {
+	public CompileRunManger(String mainClassName, String sourceCode, String... mainParams) {
 		this.mainParams = mainParams;
 		this.mainClassName = mainClassName;
 		this.sourceCode = sourceCode;
@@ -52,7 +52,7 @@ public class CompileRunListner {
 		catch (NoSuchMethodException e) {errorList.add(e);} 
 		catch (SecurityException e) {errorList.add(e);} 
 		catch (IllegalAccessException e) {errorList.add(e);} 
-		catch (InvocationTargetException e) {errorList.add(e);}
+		catch (InvocationTargetException e) {errorList.add(e.getCause());}
 		
 		if(hasError()) {
 			errorList.stream().forEach(e -> {

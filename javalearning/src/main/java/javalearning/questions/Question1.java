@@ -4,8 +4,8 @@ import javalearning.core.stream.LearningPrintStream;
 
 public class Question1 extends AbstractQuestion {
 
-	public Question1(LearningPrintStream outStream, LearningPrintStream errStream) {
-		super(outStream, errStream);
+	public Question1(LearningPrintStream consoleStream, LearningPrintStream outStream, LearningPrintStream errStream) {
+		super(consoleStream, outStream, errStream);
 	}
 
 	@Override

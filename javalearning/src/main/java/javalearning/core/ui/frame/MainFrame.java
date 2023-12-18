@@ -1,6 +1,8 @@
 package javalearning.core.ui.frame;
 
 import java.awt.event.InputEvent;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,10 +49,25 @@ public class MainFrame extends AbstractBaseFrame {
 	@Override
 	protected void execute() {
 		createMenubar();
+		
+		outputTabPanel.getOutputPanel().addListener(new InputMethodListener() {
+			
+			@Override
+			public void inputMethodTextChanged(InputMethodEvent event) {
+				System.out.println("入力 チェンジ");
+				
+			}
+			
+			@Override
+			public void caretPositionChanged(InputMethodEvent event) {
+				System.out.println("入力 ポジション");
+				
+			}
+		});
 	}
 	
 	private void createMenubar() {
-		AbstractQuestion question = new Question1(outputPrintStream, errorPrintStream);
+		AbstractQuestion question = new Question1(consolePrintStream, outputPrintStream, errorPrintStream);
 		editorPanel.setInputText(question.getSourceCode());
 		JMenuBar menubar = new JMenuBar();
 		JMenu fileMenu = new JMenu("ファイル");
@@ -59,6 +76,7 @@ public class MainFrame extends AbstractBaseFrame {
 		runMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
 		runMenuItem.addActionListener(event -> {
 			outputTabPanel.getOutputPanel().resetText();
+			outputTabPanel.getErrorPanel().resetText();
 			question.setSourceCode(editorPanel.getInputText());
 			
 			SwingUtilities.invokeLater(question);

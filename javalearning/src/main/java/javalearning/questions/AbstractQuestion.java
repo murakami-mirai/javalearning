@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javalearning.core.listener.CompileRunListner;
+import javalearning.core.control.CompileRunManger;
 import javalearning.core.stream.LearningPrintStream;
 
 public abstract class AbstractQuestion implements Runnable {
@@ -27,6 +27,8 @@ public abstract class AbstractQuestion implements Runnable {
 	private static final Logger LOGGER = LogManager.getLogger(AbstractQuestion.class);
 
 	/** ラーニングシステムの標準出力 */
+	private final LearningPrintStream consoleStream;
+	/** ラーニングシステムの標準出力 */
 	private final LearningPrintStream outStream;
 	/** ラーニングシステムの標準エラー */
 	private final LearningPrintStream errStream;
@@ -40,9 +42,10 @@ public abstract class AbstractQuestion implements Runnable {
 	 * @param outStream 出力ストリーム
 	 * @param errStream エラー出力ストリーム
 	 */
-	public AbstractQuestion(LearningPrintStream outStream, LearningPrintStream errStream) {
+	public AbstractQuestion(LearningPrintStream consoleStream, LearningPrintStream outStream, LearningPrintStream errStream) {
 		sourceCode = getCode();
 		mainParams = new String[0];
+		this.consoleStream = consoleStream;
 		this.outStream = outStream;
 		this.errStream = errStream;
 	}
@@ -53,9 +56,10 @@ public abstract class AbstractQuestion implements Runnable {
 	 * @param errStream エラー出力ストリーム
 	 * @param args メインパラメータ
 	 */
-	public AbstractQuestion(LearningPrintStream outStream, LearningPrintStream errStream, String... args) {
+	public AbstractQuestion(LearningPrintStream consoleStream, LearningPrintStream outStream, LearningPrintStream errStream, String... args) {
 		sourceCode = getCode();
 		mainParams = args;
+		this.consoleStream = consoleStream;
 		this.outStream = outStream;
 		this.errStream = errStream;
 	}
@@ -70,15 +74,15 @@ public abstract class AbstractQuestion implements Runnable {
 	
 	@Override
 	public void run() {
-		CompileRunListner listner = new CompileRunListner(getFQCN(), sourceCode, mainParams);
+		CompileRunManger listner = new CompileRunManger(getFQCN(), sourceCode, mainParams);
 		
 		setStdOut(outStream, errStream);
 		listner.run();
 		if (isSuccess()) {
-			System.out.println("正解!!");
+			consoleStream.println(getClass().getSimpleName() + " 正解!!");
 			LOGGER.info("正解");
 		} else {
-			System.out.println("残念。。。");
+			consoleStream.println(getClass().getSimpleName() + " 残念。。。");
 			LOGGER.info("不正解");
 		}
 		setStdOut(SYSTEM_OUT, SYSTEM_ERR);
