@@ -13,6 +13,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import javalearning.core.QuestionXMLReader;
 import javalearning.core.stream.LearnigOutputStream;
 import javalearning.core.stream.LearningPrintStream;
 import javalearning.core.ui.panel.EditorPanel;
@@ -67,6 +68,7 @@ public class MainFrame extends AbstractBaseFrame {
 	}
 	
 	private void createMenubar() {
+		new QuestionXMLReader("question.xml").getQuestions();
 		AbstractQuestion question = new Question1(consolePrintStream, outputPrintStream, errorPrintStream);
 		editorPanel.setInputText(question.getSourceCode());
 		JMenuBar menubar = new JMenuBar();
