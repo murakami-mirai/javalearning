@@ -1,8 +1,6 @@
 package javalearning.core.ui.frame;
 
 import java.awt.event.InputEvent;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +11,11 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import javalearning.core.QuestionXMLReader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javalearning.core.control.reader.QuestionXMLReader;
+import javalearning.core.exception.QuestionXMLReaderException;
 import javalearning.core.stream.LearnigOutputStream;
 import javalearning.core.stream.LearningPrintStream;
 import javalearning.core.ui.panel.EditorPanel;
@@ -23,6 +25,8 @@ import javalearning.questions.AbstractQuestion;
 import javalearning.questions.Question1;
 
 public class MainFrame extends AbstractBaseFrame {
+	
+	private final static Logger LOGGER = LogManager.getLogger(AbstractQuestion.class);
 	
 	private final EditorPanel editorPanel;
 	private final OutputTabPanel outputTabPanel;
@@ -50,25 +54,15 @@ public class MainFrame extends AbstractBaseFrame {
 	@Override
 	protected void execute() {
 		createMenubar();
-		
-		outputTabPanel.getOutputPanel().addListener(new InputMethodListener() {
-			
-			@Override
-			public void inputMethodTextChanged(InputMethodEvent event) {
-				System.out.println("入力 チェンジ");
-				
-			}
-			
-			@Override
-			public void caretPositionChanged(InputMethodEvent event) {
-				System.out.println("入力 ポジション");
-				
-			}
-		});
+	
 	}
 	
 	private void createMenubar() {
-		new QuestionXMLReader("question.xml").getQuestions();
+		try {
+			new QuestionXMLReader("question.xml").getQuestions();
+		} catch (QuestionXMLReaderException e) {
+			LOGGER.error(e);
+		}
 		AbstractQuestion question = new Question1(consolePrintStream, outputPrintStream, errorPrintStream);
 		editorPanel.setInputText(question.getSourceCode());
 		JMenuBar menubar = new JMenuBar();

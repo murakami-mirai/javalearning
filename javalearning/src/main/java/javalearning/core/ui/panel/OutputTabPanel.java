@@ -13,7 +13,7 @@ public class OutputTabPanel extends JTabbedPane implements IPanel {
 	private OutputPanel errorPanel;
 	
 	public OutputTabPanel() {
-		consolePanel = new OutputPanel(new TabFocusListener(this));
+		consolePanel = new OutputPanel();
 		outputPanel = new OutputPanel(new TabFocusListener(this));
 		errorPanel = new OutputPanel(new TabFocusListener(this));
 	}
