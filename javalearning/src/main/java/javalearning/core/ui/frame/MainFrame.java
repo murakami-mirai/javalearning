@@ -59,7 +59,7 @@ public class MainFrame extends AbstractBaseFrame {
 	
 	private void createMenubar() {
 		try {
-			new QuestionXMLReader("question.xml").getQuestions();
+			new QuestionXMLReader("question.xml",consolePrintStream, outputPrintStream, errorPrintStream).getQuestions();
 		} catch (QuestionXMLReaderException e) {
 			LOGGER.error(e);
 		}

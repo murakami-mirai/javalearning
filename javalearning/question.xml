@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Questions>
   <Question>
+  	<Code>
+  		System.out.println();
+  	</Code>
     <Text>
-      あと少し
+      「3」を表示するプログラムを作成してください
     </Text>
+    <Answer>
+    	3
+    </Answer>
   </Question>
 </Questions>

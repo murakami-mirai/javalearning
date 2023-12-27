@@ -8,7 +8,7 @@ public class LearningInputStream extends InputStream {
 	public static final byte[] END = null;
 	
 	private final String[] inputPrams;
-	private byte[] currentParam;
+	private byte[] currentParams;
 	private int currentParamPos;
 	private int currentBytePos;
 	
@@ -24,14 +24,22 @@ public class LearningInputStream extends InputStream {
 		return 0;
 	}
 	
-	private boolean next() {
-		if (currentBytePos)
+	private boolean isNext() {
+		if (currentBytePos < currentParams.length) {
+			return true;
+		}
+		if (currentParamPos < inputPrams.length) {
+			currentParams = inputPrams[currentParamPos].getBytes();
+			currentParamPos++;
+			return true;
+		}
+		return false;
 	}
 	
 	private void init() {
 		if (currentParamPos < inputPrams.length
-				|| inputPrams[currentBytePos]) {
-			currentParam = 
+				|| inputPrams[currentParamPos] != null) {
+			currentParams = inputPrams[currentParamPos].getBytes();
 		}
 	}
 }
