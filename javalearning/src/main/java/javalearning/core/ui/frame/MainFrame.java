@@ -22,18 +22,22 @@ import javalearning.core.ui.panel.EditorPanel;
 import javalearning.core.ui.panel.IPanel;
 import javalearning.core.ui.panel.OutputTabPanel;
 import javalearning.questions.AbstractQuestion;
-import javalearning.questions.Question1;
 
 public class MainFrame extends AbstractBaseFrame {
 	
 	private final static Logger LOGGER = LogManager.getLogger(AbstractQuestion.class);
+	private final static String QUESTION_XML_FILE_NAME = "question.xml";
 	
 	private final EditorPanel editorPanel;
 	private final OutputTabPanel outputTabPanel;
 	private final LearningPrintStream consolePrintStream;
 	private final LearningPrintStream outputPrintStream;
 	private final LearningPrintStream errorPrintStream;
-
+	private final QuestionXMLReader reader;
+	
+	private AbstractQuestion question;
+	
+	
 	public MainFrame() {
 		editorPanel = new EditorPanel();
 		outputTabPanel = new OutputTabPanel();
@@ -44,6 +48,7 @@ public class MainFrame extends AbstractBaseFrame {
 		consolePrintStream = new LearningPrintStream(consoleOutStream);
 		outputPrintStream = new LearningPrintStream(outputOutStream);
 		errorPrintStream = new LearningPrintStream(errorOutStream);
+		reader = new QuestionXMLReader(QUESTION_XML_FILE_NAME, outputPrintStream, errorPrintStream, consolePrintStream);
 	}
 	
 	@Override
@@ -54,33 +59,55 @@ public class MainFrame extends AbstractBaseFrame {
 	@Override
 	protected void execute() {
 		createMenubar();
+		if (question != null) {
+			editorPanel.setInputText(question.getSourceCode());
+		}
 	
 	}
 	
 	private void createMenubar() {
-		try {
-			new QuestionXMLReader("question.xml",consolePrintStream, outputPrintStream, errorPrintStream).getQuestions();
-		} catch (QuestionXMLReaderException e) {
-			LOGGER.error(e);
-		}
-		AbstractQuestion question = new Question1(consolePrintStream, outputPrintStream, errorPrintStream);
-		editorPanel.setInputText(question.getSourceCode());
 		JMenuBar menubar = new JMenuBar();
 		JMenu fileMenu = new JMenu("ファイル");
+		JMenu questionMenu = new JMenu("問題");
 		JMenu editMenu = new JMenu("実行");
-		JMenuItem runMenuItem = new JMenuItem("実行");
-		runMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
-		runMenuItem.addActionListener(event -> {
+		setRunItemMenu(editMenu);
+		setQuestionsItemMenu(questionMenu);
+		
+		menubar.add(fileMenu);
+		menubar.add(questionMenu);
+		menubar.add(editMenu);
+		setJMenuBar(menubar);
+	}
+	
+	private void setRunItemMenu(JMenu menu) {
+		JMenuItem item = new JMenuItem("実行");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
+		item.addActionListener(event -> {
 			outputTabPanel.getOutputPanel().resetText();
 			outputTabPanel.getErrorPanel().resetText();
 			question.setSourceCode(editorPanel.getInputText());
 			
 			SwingUtilities.invokeLater(question);
 		});
-		editMenu.add(runMenuItem);
-		
-		menubar.add(fileMenu);
-		menubar.add(editMenu);
-		setJMenuBar(menubar);
+		menu.add(item);
+	}
+	
+	private void setQuestionsItemMenu(JMenu menu) {
+		boolean isFirst = true;
+		try {
+			for (AbstractQuestion q : reader.getQuestions()) {
+				if (isFirst) {
+					question = q;
+					isFirst = false;
+				}
+				JMenuItem item = new JMenuItem(q.getClass().getSimpleName());
+				item.addActionListener(event -> {
+					editorPanel.setInputText(q.getSourceCode());
+				});
+				menu.add(item);
+			}
+		} catch (QuestionXMLReaderException e) {
+			LOGGER.error(e);
+		}
 	}
 }

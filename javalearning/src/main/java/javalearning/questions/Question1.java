@@ -23,4 +23,9 @@ public class Question1 extends AbstractQuestion {
 		return "「3」を表示するプログラムを作成して下さい";
 	}
 
+	@Override
+	protected String getQuestionName() {
+		return "Question1";
+	}
+
 }

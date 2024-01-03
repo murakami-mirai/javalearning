@@ -43,7 +43,6 @@ public abstract class AbstractQuestion implements Runnable {
 	 * @param errStream エラー出力ストリーム
 	 */
 	public AbstractQuestion(LearningPrintStream consoleStream, LearningPrintStream outStream, LearningPrintStream errStream) {
-		sourceCode = getCode();
 		mainParams = new String[0];
 		this.consoleStream = consoleStream;
 		this.outStream = outStream;
@@ -57,7 +56,6 @@ public abstract class AbstractQuestion implements Runnable {
 	 * @param args メインパラメータ
 	 */
 	public AbstractQuestion(LearningPrintStream consoleStream, LearningPrintStream outStream, LearningPrintStream errStream, String... args) {
-		sourceCode = getCode();
 		mainParams = args;
 		this.consoleStream = consoleStream;
 		this.outStream = outStream;
@@ -65,7 +63,17 @@ public abstract class AbstractQuestion implements Runnable {
 	}
 	
 	public String getSourceCode() {
-		return sourceCode;
+		StringBuilder sb = new StringBuilder();
+		if (isExistPackage()) {
+			sb.append("package ").append(getPackage());
+		}
+		sb.append(createJavaDocComment());
+		sb.append("public class ").append(MAIN_CLASS).append(" {").append(LF);
+		sb.append(INDENT).append("public static void main(String[] args) {").append(LF);
+		sb.append(INDENT).append(INDENT).append(getBeginningCode()).append(LF);
+		sb.append(INDENT).append("}").append(LF);
+		sb.append("}");
+		return sb.toString();
 	}
 
 	public void setSourceCode(String sourceCode) {
@@ -94,26 +102,14 @@ public abstract class AbstractQuestion implements Runnable {
 	
 	protected abstract String getQuestionText();
 	
+	protected abstract String getQuestionName();
+	
 	protected String getMainClassName() {
 		return MAIN_CLASS;
 	}
 	
 	protected String getPackage() {
 		return DEFAULT_PACKAGE;
-	}
-	
-	private String getCode() {
-		StringBuilder sb = new StringBuilder();
-		if (isExistPackage()) {
-			sb.append("package ").append(getPackage());
-		}
-		sb.append(createJavaDocComment());
-		sb.append("public class ").append(MAIN_CLASS).append(" {").append(LF);
-		sb.append(INDENT).append("public static void main(String[] args) {").append(LF);
-		sb.append(INDENT).append(INDENT).append(getBeginningCode()).append(LF);
-		sb.append(INDENT).append("}").append(LF);
-		sb.append("}");
-		return sb.toString();
 	}
 	
 	private String getFQCN() {
