@@ -8,12 +8,23 @@ import javalearning.core.listener.ui.TabFocusListener;
 
 public class OutputTabPanel extends JTabbedPane implements IPanel {
 
-	private OutputPanel consolePanel;
-	private OutputPanel outputPanel;
-	private OutputPanel errorPanel;
+	private static final String CONSOLE = "コンソール";
+	private static final String INPUT = "標準入力";
+	private static final String OUTPUT = "標準出力";
+	private static final String ERROR = "標準エラー";
+	
+	/** コンソールパネル */
+	private final OutputPanel consolePanel;
+	/** 標準入力パネル */
+	private final OutputPanel inputPanel;
+	/** 標準出力パネル */
+	private final OutputPanel outputPanel;
+	/** 標準エラーパネル */
+	private final OutputPanel errorPanel;
 	
 	public OutputTabPanel() {
 		consolePanel = new OutputPanel();
+		inputPanel = new OutputPanel();
 		outputPanel = new OutputPanel(new TabFocusListener(this));
 		errorPanel = new OutputPanel(new TabFocusListener(this));
 	}
@@ -21,12 +32,14 @@ public class OutputTabPanel extends JTabbedPane implements IPanel {
 	@Override
 	public void create() {
 		consolePanel.create();
+		inputPanel.create();
 		outputPanel.create();
 		errorPanel.create();
 		
-		this.addTab("コンソール", consolePanel);
-		this.addTab("標準出力", outputPanel);
-		this.addTab("エラー出力", errorPanel);
+		this.addTab(CONSOLE, consolePanel);
+		this.addTab(INPUT, inputPanel);
+		this.addTab(OUTPUT, outputPanel);
+		this.addTab(ERROR, errorPanel);
 		
 	}
 
@@ -61,5 +74,8 @@ public class OutputTabPanel extends JTabbedPane implements IPanel {
 	public OutputPanel getErrorPanel() {
 		return errorPanel;
 	}
-
+	
+	public OutputPanel getInputPanel() {
+		return inputPanel;
+	}
 }

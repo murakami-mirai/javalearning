@@ -1,5 +1,6 @@
 package javalearning.questions;
 
+import javalearning.core.stream.LearningInputStream;
 import javalearning.core.stream.LearningPrintStream;
 
 public class ReadableQuestion extends AbstractQuestion {
@@ -11,8 +12,9 @@ public class ReadableQuestion extends AbstractQuestion {
 	
 	public ReadableQuestion(LearningPrintStream consoleStream, 
 			LearningPrintStream outStream, 
-			LearningPrintStream errStream) {
-		super(consoleStream, outStream, errStream);
+			LearningPrintStream errStream,
+			LearningInputStream inputStream) {
+		super(consoleStream, outStream, errStream, inputStream);
 	}
 
 	@Override
@@ -31,7 +33,7 @@ public class ReadableQuestion extends AbstractQuestion {
 	}
 	
 	@Override
-	protected String getQuestionName() {
+	public String getQuestionName() {
 		return questionName;
 	}
 

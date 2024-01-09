@@ -1,11 +1,13 @@
 package javalearning.questions;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javalearning.core.control.CompileRunManger;
+import javalearning.core.stream.LearningInputStream;
 import javalearning.core.stream.LearningPrintStream;
 
 public abstract class AbstractQuestion implements Runnable {
@@ -14,11 +16,14 @@ public abstract class AbstractQuestion implements Runnable {
 	protected static final String LF = "\n";
 	/** インデント */
 	protected static final String INDENT = "\t";
+	protected static final String HORIZON = "--------";
 	
 	/** 標準出力を保存 */
 	private static final PrintStream SYSTEM_OUT = System.out;
 	/** 標準エラーを保存 */
 	private static final PrintStream SYSTEM_ERR = System.err;
+	/** 標準入力を保存 */
+	private static final InputStream SYSTEM_IN = System.in;
 	/** デフォルトメインクラス */
 	private static final String MAIN_CLASS = "Main";
 	/** デフォルトパッケージ */
@@ -26,12 +31,14 @@ public abstract class AbstractQuestion implements Runnable {
 	
 	private static final Logger LOGGER = LogManager.getLogger(AbstractQuestion.class);
 
-	/** ラーニングシステムの標準出力 */
+	/** ラーニングシステムのコンソール出力 */
 	private final LearningPrintStream consoleStream;
 	/** ラーニングシステムの標準出力 */
 	private final LearningPrintStream outStream;
 	/** ラーニングシステムの標準エラー */
 	private final LearningPrintStream errStream;
+	/** ラーニングシステムの標準入力 */
+	private final LearningInputStream inputStream;
 	/** メインメソッドのパラメータ */
 	private String[] mainParams;
 	/** コンパイル対象のソースコード */
@@ -39,27 +46,40 @@ public abstract class AbstractQuestion implements Runnable {
 
 	/**
 	 * コンストラクタ
+	 * @param consoleStream コンソールストリーム
 	 * @param outStream 出力ストリーム
 	 * @param errStream エラー出力ストリーム
+	 * @param inputStream 入力ストリーム
 	 */
-	public AbstractQuestion(LearningPrintStream consoleStream, LearningPrintStream outStream, LearningPrintStream errStream) {
+	public AbstractQuestion(LearningPrintStream consoleStream, 
+			LearningPrintStream outStream, 
+			LearningPrintStream errStream, 
+			LearningInputStream inputStream) {
 		mainParams = new String[0];
 		this.consoleStream = consoleStream;
 		this.outStream = outStream;
 		this.errStream = errStream;
+		this.inputStream = inputStream;
 	}
 	
 	/**
 	 * コンストラクタ
+	 * @param consoleStream コンソールストリーム
 	 * @param outStream 出力ストリーム
 	 * @param errStream エラー出力ストリーム
+	 * @param inputStream 入力ストリーム
 	 * @param args メインパラメータ
 	 */
-	public AbstractQuestion(LearningPrintStream consoleStream, LearningPrintStream outStream, LearningPrintStream errStream, String... args) {
+	public AbstractQuestion(LearningPrintStream consoleStream, 
+			LearningPrintStream outStream, 
+			LearningPrintStream errStream, 
+			LearningInputStream inputStream, 
+			String... args) {
 		mainParams = args;
 		this.consoleStream = consoleStream;
 		this.outStream = outStream;
 		this.errStream = errStream;
+		this.inputStream = inputStream;
 	}
 	
 	public String getSourceCode() {
@@ -80,20 +100,25 @@ public abstract class AbstractQuestion implements Runnable {
 		this.sourceCode = sourceCode;
 	}
 	
+	public String getInputText() {
+		return inputStream.getCharacters();
+	}
+	
 	@Override
 	public void run() {
 		CompileRunManger listner = new CompileRunManger(getFQCN(), sourceCode, mainParams);
 		
-		setStdOut(outStream, errStream);
+		setStdInOut(outStream, errStream, inputStream);
 		listner.run();
 		if (isSuccess()) {
-			consoleStream.println(getClass().getSimpleName() + " 正解!!");
-			LOGGER.info("正解");
+			consoleStream.println(getQuestionName() + " 正解!!");
+			LOGGER.info(getQuestionName() + "正解");
 		} else {
-			consoleStream.println(getClass().getSimpleName() + " 残念。。。");
-			LOGGER.info("不正解");
+			consoleStream.println(getQuestionName() + " 残念。。。");
+			LOGGER.info(getQuestionName() + "不正解");
 		}
-		setStdOut(SYSTEM_OUT, SYSTEM_ERR);
+		inputStream.reset();
+		setStdInOut(SYSTEM_OUT, SYSTEM_ERR, SYSTEM_IN);
 	}
 	
 	protected abstract String getBeginningCode();
@@ -102,7 +127,7 @@ public abstract class AbstractQuestion implements Runnable {
 	
 	protected abstract String getQuestionText();
 	
-	protected abstract String getQuestionName();
+	public abstract String getQuestionName();
 	
 	protected String getMainClassName() {
 		return MAIN_CLASS;
@@ -128,14 +153,15 @@ public abstract class AbstractQuestion implements Runnable {
 		return !(pack == null || pack.isBlank());
 	}
 	
-	private void setStdOut(PrintStream out, PrintStream err) {
+	private void setStdInOut(PrintStream out, PrintStream err, InputStream in) {
 		System.setOut(out);
 		System.setErr(err);
+		System.setIn(in);
 	}
 	
 	private boolean isSuccess() {
 		String correct = getCorrectAnswer();
-		if (correct == null || correct.trim().isEmpty()) {
+		if (correct == null || correct.isBlank()) {
 			return true;
 		}
 		
@@ -164,6 +190,8 @@ public abstract class AbstractQuestion implements Runnable {
 	 * ---------------------
 	 * 問題名(クラス名)
 	 * 問題文
+	 * 
+	 * 実行結果
 	 * ---------------------
 	 * }</pre>
 	 * @return 作成したJavaDocコメント
@@ -174,16 +202,24 @@ public abstract class AbstractQuestion implements Runnable {
 		final String endComment = "*/";
 		final String bol = "* ";
 		
-		String content = getQuestionText();
 		StringBuilder sb = new StringBuilder(startComment).append(LF);
-		
-		sb.append(bol).append(getClass().getSimpleName()).append(LF);
+		sb.append(bol).append(getQuestionName()).append(LF);
 		
 		// 問題文がある場合、問題文を表示
+		String content = getQuestionText();
 		if (content != null && !content.isBlank()) {
 			content.lines().forEach(t -> {
 				sb.append(bol).append(t).append(LF);
 			});
+		}
+		
+		// 実行結果がある場合、実行結果を表示
+		String answer = trimIndentionOfLineEnd(getCorrectAnswer());
+		if (answer != null && !answer.isBlank()) {
+			sb.append(bol).append(LF);
+			sb.append(bol).append(HORIZON).append("実行結果").append(HORIZON).append(LF);
+			sb.append(bol).append(answer).append(LF);
+			sb.append(bol).append(HORIZON).append(HORIZON).append(HORIZON).append(LF);
 		}
 
 		sb.append(endComment).append(LF);

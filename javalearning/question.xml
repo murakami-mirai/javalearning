@@ -14,4 +14,32 @@
     	3
     </Answer>
   </Question>
+  <Question>
+  	<Name>
+  		Question2
+  	</Name>
+    <Text>
+      「Hello, World」を表示するプログラムを作成してください
+    </Text>
+    <Answer>
+    	Hello, World
+    </Answer>
+  </Question>
+  <Question>
+  	<Name>
+  		Question3
+  	</Name>
+    <Text>
+      入力した文字列を表示するプログラムを作成してください
+    </Text>
+    <Answer>
+    	Hello, World
+    </Answer>
+    <Input>
+    	Hello,
+    </Input>
+    <Input>
+    	 World
+    </Input>
+  </Question>
 </Questions>

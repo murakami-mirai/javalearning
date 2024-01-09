@@ -17,11 +17,14 @@ import org.apache.logging.log4j.Logger;
 import javalearning.core.control.reader.QuestionXMLReader;
 import javalearning.core.exception.QuestionXMLReaderException;
 import javalearning.core.stream.LearnigOutputStream;
+import javalearning.core.stream.LearningInputStream;
 import javalearning.core.stream.LearningPrintStream;
 import javalearning.core.ui.panel.EditorPanel;
 import javalearning.core.ui.panel.IPanel;
+import javalearning.core.ui.panel.OutputPanel;
 import javalearning.core.ui.panel.OutputTabPanel;
 import javalearning.questions.AbstractQuestion;
+import javalearning.questions.TutorialQuestion;
 
 public class MainFrame extends AbstractBaseFrame {
 	
@@ -29,6 +32,7 @@ public class MainFrame extends AbstractBaseFrame {
 	private final static String QUESTION_XML_FILE_NAME = "question.xml";
 	
 	private final EditorPanel editorPanel;
+	private final OutputPanel inputPanel;
 	private final OutputTabPanel outputTabPanel;
 	private final LearningPrintStream consolePrintStream;
 	private final LearningPrintStream outputPrintStream;
@@ -41,6 +45,7 @@ public class MainFrame extends AbstractBaseFrame {
 	public MainFrame() {
 		editorPanel = new EditorPanel();
 		outputTabPanel = new OutputTabPanel();
+		inputPanel = outputTabPanel.getInputPanel();
 		
 		LearnigOutputStream consoleOutStream = new LearnigOutputStream(outputTabPanel.getConsolePanel());
 		LearnigOutputStream outputOutStream = new LearnigOutputStream(outputTabPanel.getOutputPanel());
@@ -48,7 +53,7 @@ public class MainFrame extends AbstractBaseFrame {
 		consolePrintStream = new LearningPrintStream(consoleOutStream);
 		outputPrintStream = new LearningPrintStream(outputOutStream);
 		errorPrintStream = new LearningPrintStream(errorOutStream);
-		reader = new QuestionXMLReader(QUESTION_XML_FILE_NAME, outputPrintStream, errorPrintStream, consolePrintStream);
+		reader = new QuestionXMLReader(QUESTION_XML_FILE_NAME, consolePrintStream, outputPrintStream, errorPrintStream);
 	}
 	
 	@Override
@@ -59,9 +64,10 @@ public class MainFrame extends AbstractBaseFrame {
 	@Override
 	protected void execute() {
 		createMenubar();
-		if (question != null) {
-			editorPanel.setInputText(question.getSourceCode());
-		}
+		LearningInputStream tutorialInputStream = new LearningInputStream("あああ\nべべ"); 
+		question = new TutorialQuestion(consolePrintStream, outputPrintStream, errorPrintStream, tutorialInputStream);
+		editorPanel.setInputText(question.getSourceCode());
+		inputPanel.setText(question.getInputText());
 	
 	}
 	
@@ -93,21 +99,33 @@ public class MainFrame extends AbstractBaseFrame {
 	}
 	
 	private void setQuestionsItemMenu(JMenu menu) {
-		boolean isFirst = true;
 		try {
 			for (AbstractQuestion q : reader.getQuestions()) {
-				if (isFirst) {
-					question = q;
-					isFirst = false;
-				}
-				JMenuItem item = new JMenuItem(q.getClass().getSimpleName());
+				JMenuItem item = new JMenuItem(q.getQuestionName());
 				item.addActionListener(event -> {
 					editorPanel.setInputText(q.getSourceCode());
+					inputPanel.setText(q.getInputText());
+					question = q;
+					disableCurrentQuestion(menu, item);
 				});
 				menu.add(item);
 			}
 		} catch (QuestionXMLReaderException e) {
 			LOGGER.error(e);
+		}
+	}
+	
+	private void disableCurrentQuestion(JMenu menu, JMenuItem item) {
+		for (int i = 0; i < menu.getItemCount(); i++) {
+			JMenuItem im = menu.getItem(i);
+			if (im == null) {
+				continue;
+			}
+			if(im.equals(item)) {
+				im.setEnabled(false);
+			} else {
+				im.setEnabled(true);
+			}
 		}
 	}
 }

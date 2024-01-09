@@ -27,6 +27,16 @@ public class OutputPanel extends AbstractScrollBasePanel {
 		subPanel = new JScrollPane(textArea);
 	}
 	
+	public synchronized void setText(String text) {
+		if (text == null) {
+			text = "";
+		}
+		textArea.setText(text);
+		if (listener != null) {
+			listener.forcus(this);
+		}
+	}
+	
 	public synchronized void appendText(String text) {
 		if (text == null) {
 			text = "";

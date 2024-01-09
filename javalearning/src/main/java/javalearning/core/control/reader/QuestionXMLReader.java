@@ -2,8 +2,8 @@ package javalearning.core.control.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javalearning.core.exception.QuestionXMLReaderException;
+import javalearning.core.stream.LearningInputStream;
 import javalearning.core.stream.LearningPrintStream;
 import javalearning.questions.AbstractQuestion;
 import javalearning.questions.ReadableQuestion;
@@ -26,7 +27,8 @@ public class QuestionXMLReader {
 
 	/** ロガー */
 	private static final Logger LOGGER = LogManager.getLogger(QuestionXMLReader.class);
-
+	private static final String DELIMITER = "\n";
+	
 	private final File xmlFile;
 	private final LearningPrintStream consoleStream;
 	private final LearningPrintStream outStream;
@@ -46,7 +48,7 @@ public class QuestionXMLReader {
 	 * @throws QuestionXMLReaderException
 	 */
 	public AbstractQuestion[] getQuestions() throws QuestionXMLReaderException {
-		List<AbstractQuestion> list = new ArrayList<>();
+		Map<String, AbstractQuestion> questionMap = new TreeMap<>();
 		try {
 			DocumentBuilder documentBuilder = DocumentBuilderFactory
 											  .newDefaultInstance()
@@ -65,18 +67,18 @@ public class QuestionXMLReader {
 			// Questionタグを取得する
 			NodeList questions = root.getElementsByTagName(Tag.QUESTION_TAG.getTagName());
 			if (questions == null) {
-				return list.toArray(new AbstractQuestion[list.size()]);
+				return new AbstractQuestion[0];
 			}
 
 			// Questionタグの中にあるタグからAbstractQuestionを作成し、リストに格納する
 			for (int i = 0; i < questions.getLength(); i++) {
 				Node node = questions.item(i);
-				System.out.println(node.getNodeName());
+				LOGGER.info(node.getNodeName());
 
 				if (node instanceof Element) {
 					Element e = (Element)node;
 					AbstractQuestion q = createQuestion(e);
-					list.add(q);
+					questionMap.put(q.getQuestionName(), q);
 				}
 			}
 
@@ -91,15 +93,18 @@ public class QuestionXMLReader {
 			throw new QuestionXMLReaderException(e);
 		}
 
-		return list.toArray(new AbstractQuestion[list.size()]);
+		return questionMap.values().toArray(new AbstractQuestion[questionMap.values().size()]);
 	}
 
 	private AbstractQuestion createQuestion(Element element) throws QuestionXMLReaderException {
-
-		ReadableQuestion question = new ReadableQuestion(consoleStream, outStream, errStream);
+		
+		LearningInputStream inputStream = new LearningInputStream(getContentByTag(element, Tag.INPUT_TAG));
+		
+		ReadableQuestion question = new ReadableQuestion(consoleStream, outStream, errStream, inputStream);
 		question.setBeginningCode(getContentByTag(element, Tag.CODE_TAG));
 		question.setCorrectAnswer(getContentByTag(element, Tag.ANSWER_TAG));
 		question.setQuestionText(getContentByTag(element, Tag.TEXT_TAG));
+		question.setQuestionName(getContentByTag(element, Tag.NAME_TAG));
 
 		return question;
 	}
@@ -134,19 +139,21 @@ public class QuestionXMLReader {
 				continue;
 			}
 			if (i != 0) {
-				sb.append("\n");
+				sb.append(DELIMITER);
 			}
-			sb.append(content);
+			sb.append(content.trim());
 		}
-		return sb.toString();
+		return sb.toString().trim();
 	}
 
 	private enum Tag {
 		ROOT_TAG("Questions", false, true),
 		QUESTION_TAG("Question", true, true),
-		CODE_TAG("Code", false, true),
+		CODE_TAG("Code", false, false),
 		TEXT_TAG("Text", false, true),
-		ANSWER_TAG("Answer", false, true);
+		ANSWER_TAG("Answer", false, true),
+		NAME_TAG("Name", false, true),
+		INPUT_TAG("Input", true, false);
 
 		private String tagName;
 		private boolean mutable;

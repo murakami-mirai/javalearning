@@ -5,41 +5,51 @@ import java.io.InputStream;
 
 public class LearningInputStream extends InputStream {
 
-	public static final byte[] END = null;
-	
-	private final String[] inputPrams;
-	private byte[] currentParams;
-	private int currentParamPos;
-	private int currentBytePos;
-	
-	public LearningInputStream(String[] inputPrams) {
-		this.inputPrams = inputPrams;
-		currentParamPos = 0;
-		currentBytePos = 0;
+	/** 文字列 */
+	private byte[] characters;
+	private int charPos;
+
+	public LearningInputStream(String input) {
+		characters = input.getBytes();
+		reset();
 	}
 	
 	@Override
 	public int read() throws IOException {
+
+		// 文字列に次の文字が存在する場合、その文字列を返却
+		if (isNext()) {
+			return characters[charPos];
+		}
+		return -1;
 		
-		return 0;
 	}
 	
-	private boolean isNext() {
-		if (currentBytePos < currentParams.length) {
-			return true;
-		}
-		if (currentParamPos < inputPrams.length) {
-			currentParams = inputPrams[currentParamPos].getBytes();
-			currentParamPos++;
-			return true;
-		}
+	@Override
+	public boolean markSupported() {
 		return false;
 	}
 	
-	private void init() {
-		if (currentParamPos < inputPrams.length
-				|| inputPrams[currentParamPos] != null) {
-			currentParams = inputPrams[currentParamPos].getBytes();
+	@Override
+	public void reset() {
+		charPos = -1;
+	}
+	
+	@Override
+	public void close() {
+		reset();
+	}
+	
+	public String getCharacters() {
+		return new String(characters);
+	}
+	
+	private boolean isNext() {
+		charPos++;
+		// inputが見ていない場合
+		if (charPos < characters.length) {
+			return true;
 		}
+		return false;
 	}
 }
