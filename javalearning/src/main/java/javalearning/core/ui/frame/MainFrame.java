@@ -128,4 +128,8 @@ public class MainFrame extends AbstractBaseFrame {
 			}
 		}
 	}
+	
+	private void setFileItemMenu(JMenu menu) {
+		
+	}
 }
